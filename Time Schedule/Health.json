@@ -1,0 +1,122 @@
+{
+  "name": "Smart Free Time Health Habit Suggester",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.schedule }}",
+        "options": {
+          "systemMessage": "You are a helpful health and wellness assistant that analyzes users' schedules and suggests healthy habits for their free time.\n\nYour task is to:\n1. Analyze the user's schedule or to-do list with time slots\n2. Identify free time gaps between activities\n3. Suggest appropriate healthy habits based on the duration of free time:\n   - Short breaks (15-30 min): stretching, meditation, short walk, hydration reminder, breathing exercises\n   - Medium breaks (30-60 min): light exercise, yoga session, healthy meal prep, reading, power nap\n   - Long breaks (1-2+ hours): gym workout, running, cycling, swimming, cooking healthy meals, outdoor activities\n4. Consider the time of day when making suggestions (e.g., morning: energizing activities, evening: relaxing activities)\n5. Provide specific, actionable recommendations with estimated time requirements\n6. Be encouraging and supportive in your tone\n\nFormat your response in a clear, easy-to-read manner with specific time slots and corresponding healthy habit suggestions."
+        }
+      },
+      "id": "b20928a3-1fa4-4e67-aaab-aa56eaf91e6f",
+      "name": "Health Habit Suggester Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        208,
+        -288
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "id": "c0d35e14-a765-46c7-9947-12d324d94d62",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        -48
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "448oJhT4sE98QBAG",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "health-habits",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "abb313d5-9785-456f-be26-1e1175716958",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -32,
+        -272
+      ],
+      "webhookId": "0ce0dada-0167-4a10-9da9-a564737caa02"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "ef2fb7a1-bb74-4f70-9081-b9f2c4145985",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        560,
+        -272
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Health Habit Suggester Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Health Habit Suggester Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Health Habit Suggester Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c46b3a2b-6098-4ee4-b3b6-6b51073c04b0",
+  "meta": {
+    "instanceId": "89d353ac2d7752c19b93a402f7813ebf3e84d0c32856e6247552604514558447"
+  },
+  "id": "X5UDIimg3Ff0Pma9",
+  "tags": []
+}
